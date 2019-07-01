@@ -3,6 +3,7 @@
 const assert = require('assert')
 const {join} = require('path')
 const {mkdir, writeFile, constants} = require('fs')
+const {readFileSync, statSync} = require('fs')
 
 const run = require('taskling')
 const tree = require('build-file-tree-from-object')
@@ -10,30 +11,8 @@ const tree = require('build-file-tree-from-object')
 const fn = require('../index.js')
 
 const testDir = __dirname
-const testspaceDir = join(testDir, 'testspace')
+const testspaceDir = join(testDir, 'space')
 
-// 1. mode: within, child, sibling, parent
-// 2. copy, move
-// 3. target exists false/true (overwrite=true will error out)
-// 4. overwrite true, false
-
-// for (const mode of [ 'within', 'child', 'sibling', 'parent' ]) {
-//   for (const move of [ false, true ]) {
-//     for (const exists of [ false, true ]) {
-//       for (const overwrite of [ true, false ]) {
-//         const id =
-//           (move ? 'move ' : 'copy ')
-//           + mode
-//           + (exists ? ' +' : ' -') + 'target_exists '
-//           + (overwrite ? '+' : '-') + 'overwrite '
-//         tests.push({ id, move, overwrite, exists, mode })
-//       }
-//     }
-//   }
-// }
-// test for errors when options are missing
-//  - no callback throws Error
-//  - no source passes Error to callback
 
 describe('test invalid options', () => {
 
@@ -224,6 +203,10 @@ describe('copyFile', () => {
     })
   })
 
+})
+
+describe('io errors', () => {
+
   it('missing dir', (done) => {
 
     const file1 = 'source.file'
@@ -388,6 +371,52 @@ describe('copyFile', () => {
 
         done()
       },
+    })
+  })
+
+})
+
+describe('real io', () => {
+
+  it.only('missing dirs', (done) => {
+
+    const string = 'testing\n123\n'
+
+    const file1 = 'source.file'
+    const file2 = join('first', 'second', 'target.file')
+
+    const sourcePath = join(testspaceDir, file1)
+
+    const boundFn = fn.bind(this, {
+      cwd: testspaceDir,
+      overwrite: false,
+      move: false,
+      source: file1,
+      target: file2,
+      done: error => {
+
+        // ensure our source file is still there. // TODO: avoid sync version.
+        assert.equal(readFileSync(sourcePath, 'utf8'), string)
+
+        // ensure our target file, and its parent directories, were created.
+
+        assert(statSync(join(testspaceDir, 'first')).isDirectory(), 'should have first directory')
+        assert(statSync(join(testspaceDir, 'first', 'second')).isDirectory(), 'should have second directory')
+        assert(statSync(join(testspaceDir, file2)).isFile(), 'should be a file')
+
+        done()
+      },
+    })
+
+    // create our source file.
+    writeFile(sourcePath, string, error => {
+      if (error) {
+        done(error)
+      }
+
+      else {
+        boundFn()
+      }
     })
   })
 
