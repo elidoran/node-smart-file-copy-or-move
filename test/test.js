@@ -378,7 +378,7 @@ describe('io errors', () => {
 
 describe('real io', () => {
 
-  it.only('missing dirs', (done) => {
+  it('missing dirs', (done) => {
 
     const string = 'testing\n123\n'
 
