@@ -1,6 +1,6 @@
 # smart-file-copy-or-move
-[![Build Status](https://travis-ci.org/elidoran/node-dirator.svg?branch=master)](https://travis-ci.org/elidoran/node-smart-file-copy-or-move)
-[![npm version](https://badge.fury.io/js/dirator.svg)](http://badge.fury.io/js/smart-file-copy-or-move)
+[![Build Status](https://travis-ci.org/elidoran/node-smart-file-copy-or-move.svg?branch=master)](https://travis-ci.org/elidoran/node-smart-file-copy-or-move)
+[![npm version](https://badge.fury.io/js/smart-file-copy-or-move.svg)](http://badge.fury.io/js/smart-file-copy-or-move)
 [![Coverage Status](https://coveralls.io/repos/github/elidoran/node-smart-file-copy-or-move/badge.svg?branch=master)](https://coveralls.io/github/elidoran/node-smart-file-copy-or-move?branch=master)
 
 Asynchronous file rename/move/copy creating needed directories.
